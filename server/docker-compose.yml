@@ -1,0 +1,43 @@
+version: "3.6"
+
+services:
+  #Backend API
+  face-detection-api:
+    container_name: Faces-Backend
+    build: ./
+    command: npm start
+    working_dir: /usr/src/face-detection-api
+    environment:
+      POSTGRES_URI: postgres://shion:secret@postgres:5432/face-detection-api-docker
+      REDIS_URI: redis://redis:6379
+      # POSTGRES_USER: shion
+      # POSTGRES_PASSWORD: secret
+      # POSTGRES_DB: smart-brain-docker
+      # POSTGRES_HOST: postgres
+    links:
+      - postgres
+      - redis
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./:/usr/src/face-detection-api
+
+  #Postgres
+  postgres:
+    container_name: Faces-Postgres
+    environment:
+      POSTGRES_USER: shion
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: face-detection-api-docker
+      POSTGRES_HOST: postgres
+    build: ./postgres
+    ports:
+      - "5434:5432"
+
+
+  #Redis
+  redis:
+    container_name: Faces-Redis
+    image: redis
+    ports:
+      - "6379:6379"
